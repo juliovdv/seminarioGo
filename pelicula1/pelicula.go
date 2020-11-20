@@ -16,7 +16,8 @@ type coleccion struct {
 	peliculas []pelicula
 }
 
-func (c *coleccion) addPelicula(p pelicula) {
+func (c *coleccion) addPelicula(id, anio int, nom, dir string) {
+	p := c.crearPelicula(id, anio, nom, dir)
 	c.peliculas = append(c.peliculas, p)
 }
 
@@ -42,12 +43,17 @@ func (c *coleccion) deletePelicula(id int) error {
 	return err
 }
 
-func (c *coleccion) actualizarPelicula(p pelicula, id int) error {
+func (c *coleccion) crearPelicula(id, anio int, nom, dir string) pelicula {
+	p := pelicula{id, nom, dir, anio}
+	return p
+}
+
+func (c *coleccion) actualizarPelicula(id, anio int, nom, dir string) error {
 	i, err := c.buscarPeliculaID(id)
 	if err == nil {
-		c.peliculas[i].nombre = p.nombre
-		c.peliculas[i].anio = p.anio
-		c.peliculas[i].director = p.director
+		c.peliculas[i].nombre = nom
+		c.peliculas[i].anio = anio
+		c.peliculas[i].director = dir
 	}
 	return err
 }
@@ -70,14 +76,11 @@ func (c *coleccion) imprimirColeccion() {
 func main() {
 
 	c := coleccion{}
-	p1 := pelicula{1, "Rambo", "Rambo", 1990}
-	p2 := pelicula{2, "Rambo 2", "Rambo", 1991}
-	p3 := pelicula{3, "Rambo 3", "Rambo", 1990}
-	c.addPelicula(p1)
-	c.addPelicula(p2)
-	c.addPelicula(p3)
+	c.addPelicula(1, 1990, "Rambo", "Rambo")
+	c.addPelicula(2, 1990, "Rambo 2", "Rambo")
+	c.addPelicula(3, 1990, "Rambo 3", "Rambo")
 	c.imprimirColeccion()
-	c.actualizarPelicula(p3, 2)
+	c.actualizarPelicula(2, 1880, "Rambo 0", "Rambo")
 	c.imprimirColeccion()
 
 }
