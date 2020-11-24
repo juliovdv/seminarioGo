@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -87,12 +86,7 @@ func main() {
 func getApi(c *gin.Context) {
 	col := coleccion{}
 	col.addPelicula(1, 1990, "Rambo", "Rambo")
-	id := c.Param("id")
-	i, _ := strconv.Atoi(id)
-	msg, err := col.getPeliculaID(i)
-	if err == nil {
-		fmt.Println(err)
-	}
+	col.addPelicula(2, 1990, "Rambo", "Rambo")
 
-	c.JSON(http.StatusOK, msg)
+	c.JSON(http.StatusOK, col.getPeliculas())
 }
