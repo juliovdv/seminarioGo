@@ -1,3 +1,6 @@
 db:
+  type: "sqlite3"
   driver: "sqlite3"
+  conn: "./test/coleccion.db"
+
 version: 0.1.0
