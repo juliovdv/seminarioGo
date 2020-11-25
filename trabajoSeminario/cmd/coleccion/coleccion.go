@@ -8,6 +8,8 @@ import (
 	"seminarioGo/trabajoSeminario/internal/database"
 	"seminarioGo/trabajoSeminario/internal/service/coleccion"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,22 +18,18 @@ func main() {
 	cfg := loadConfig()
 
 	db, err := database.NewDatabase(cfg)
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
-	err = createSchema(db)
+	defer db.Close()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
 	service, _ := coleccion.New(db, cfg)
+	httpService := coleccion.NewHTTPService(service)
 
-	for _, p := range service.GetPeliculas() {
-		fmt.Println(p)
-	}
+	r := gin.Default()
+	httpService.Register(r)
+	r.Run()
 
 }
 

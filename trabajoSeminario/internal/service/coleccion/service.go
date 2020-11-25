@@ -16,9 +16,10 @@ type Pelicula struct {
 
 //...
 type Service interface {
-	AddPelicula(Pelicula) error
-	BusquedaID(int) *Pelicula
-	GetPeliculas() []*Pelicula
+	AddPelicula(Pelicula)
+	BusquedaID(string) *Pelicula
+	GetColeccion() []*Pelicula
+	BorrarID(string)
 }
 
 type service struct {
@@ -31,14 +32,25 @@ func New(db *sqlx.DB, c *config.Config) (Service, error) {
 	return service{db, c}, nil
 }
 
-func (s service) AddPelicula(p Pelicula) error {
-	return nil
+func (s service) AddPelicula(p Pelicula) {
+	insertarPelicula := `INSERT INTO coleccion (nombre, director, anio) VALUES ($1, $2, $3)`
+	s.db.MustExec(insertarPelicula, p.Nombre, p.Director, p.Anio)
 }
-func (s service) BusquedaID(ID int) *Pelicula {
-	return nil
+func (s service) BusquedaID(id string) *Pelicula {
+	var pelicula = Pelicula{}
+	err := s.db.Get(&pelicula, "SELECT * FROM coleccion WHERE id=$1", id)
+	if err != nil {
+		return nil
+	}
+	return &pelicula
 }
-func (s service) GetPeliculas() []*Pelicula {
+func (s service) GetColeccion() []*Pelicula {
 	var lista []*Pelicula
 	s.db.Select(&lista, "SELECT * FROM coleccion")
 	return lista
+}
+
+func (s service) BorrarID(id string) {
+
+	s.db.MustExec("DELETE FROM coleccion WHERE id=$1", id).RowsAffected()
 }
