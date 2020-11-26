@@ -41,13 +41,23 @@ func makeEndpoints(s Service) []*endpoint {
 	})
 	list = append(list, &endpoint{
 		method:   "GET",
-		path:     "/pelicula/:id",
+		path:     "/coleccion/pelicula/:id",
 		function: busquedaID(s),
 	})
 	list = append(list, &endpoint{
 		method:   "DELETE",
-		path:     "/pelicula/:id",
+		path:     "/coleccion/pelicula/:id",
 		function: borrarID(s),
+	})
+	list = append(list, &endpoint{
+		method:   "POST",
+		path:     "/coleccion/pelicula",
+		function: agregarPelicula(s),
+	})
+	list = append(list, &endpoint{
+		method:   "PUT",
+		path:     "/coleccion/pelicula/:id",
+		function: modificarPelicula(s),
 	})
 	return list
 
@@ -70,8 +80,29 @@ func busquedaID(s Service) gin.HandlerFunc {
 func borrarID(s Service) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		s.BorrarID(c.Param("id"))
-		c.JSON(http.StatusOK, nil)
 
+		c.JSON(http.StatusOK, gin.H{
+			"pelicula": s.BorrarID(c.Param("id"))})
+
+	}
+}
+
+func agregarPelicula(s Service) gin.HandlerFunc {
+	var p Pelicula
+
+	return func(c *gin.Context) {
+		c.ShouldBindJSON(&p)
+		c.JSON(http.StatusOK, gin.H{
+			"pelicula": s.AddPelicula(p)})
+	}
+}
+
+func modificarPelicula(s Service) gin.HandlerFunc {
+	var p Pelicula
+
+	return func(c *gin.Context) {
+		c.ShouldBindJSON(&p)
+		c.JSON(http.StatusOK, gin.H{
+			"pelicula": s.ModificarPelicula(c.Param("id"), p)})
 	}
 }
