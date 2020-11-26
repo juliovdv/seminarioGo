@@ -2,7 +2,6 @@ package coleccion
 
 import (
 	"seminarioGo/trabajoSeminario/internal/config"
-	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -69,7 +68,6 @@ func (s service) BorrarID(id string) *Pelicula {
 func (s service) ModificarPelicula(id string, p Pelicula) *Pelicula {
 	modificarPelicula := "UPDATE coleccion SET nombre=$1, director=$2, anio=$3 WHERE id=$4"
 	s.db.MustExec(modificarPelicula, p.Nombre, p.Director, p.Anio, id)
-	idNum, _ := strconv.ParseInt(id, 10, 64)
-	p.ID = idNum
-	return &p
+	pelicula := s.BusquedaID(id)
+	return pelicula
 }

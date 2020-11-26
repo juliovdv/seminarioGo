@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//...
 type HTTPService interface {
 	Register(*gin.Engine)
 }
