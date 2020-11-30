@@ -66,8 +66,14 @@ func makeEndpoints(s Service) []*endpoint {
 
 func getColeccion(s Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"coleccion": s.GetColeccion()})
+		rtn, err := s.GetColeccion()
+		if err == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"coleccion": rtn})
+		}
+		c.JSON(500, gin.H{
+			"error": err})
+
 	}
 }
 
@@ -82,7 +88,8 @@ func borrarID(s Service) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(200, gin.H{
+			"status":   "Borrado",
 			"pelicula": s.BorrarID(c.Param("id"))})
 
 	}
@@ -93,7 +100,8 @@ func agregarPelicula(s Service) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		c.ShouldBindJSON(&p)
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(200, gin.H{
+			"status":   "Agregado",
 			"pelicula": s.AddPelicula(p)})
 	}
 }
@@ -103,7 +111,8 @@ func modificarPelicula(s Service) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		c.ShouldBindJSON(&p)
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(200, gin.H{
+			"status":   "Modificado",
 			"pelicula": s.ModificarPelicula(c.Param("id"), p)})
 	}
 }
