@@ -65,7 +65,7 @@ func (s service) BorrarID(id string) (*Pelicula, error) {
 	if err != nil {
 		return nil, err
 	}
-	return p, err
+	return p, nil
 }
 
 func (s service) ModificarPelicula(id string, p Pelicula) (*Pelicula, error) {

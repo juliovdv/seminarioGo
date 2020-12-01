@@ -1,6 +1,7 @@
 package coleccion
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -67,42 +68,64 @@ func makeEndpoints(s Service) []*endpoint {
 func getColeccion(s Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		rtn, err := s.GetColeccion()
-		if err == nil {
+		if err != nil {
+			c.JSON(500, gin.H{
+				"status": "error",
+				"error":  "no se pudo obtener la coleccion",
+			})
+		} else {
 			c.JSON(http.StatusOK, gin.H{
 				"coleccion": rtn})
 		}
-		c.JSON(500, gin.H{
-			"error": err})
-
 	}
 }
 
 func busquedaID(s Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"pelicula": s.BusquedaID(c.Param("id"))})
+		rtn, err := s.BusquedaID(c.Param("id"))
+		if err != nil {
+			c.JSON(500, gin.H{
+				"status": "error",
+				"error":  "no se pudo obtener la pelicula",
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"pelicula": rtn})
+		}
 	}
 }
 
 func borrarID(s Service) gin.HandlerFunc {
-
 	return func(c *gin.Context) {
-
-		c.JSON(200, gin.H{
-			"status":   "Borrado",
-			"pelicula": s.BorrarID(c.Param("id"))})
-
+		rtn, err := s.BorrarID(c.Param("id"))
+		fmt.Println(err)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"status": "error",
+				"error":  "no se pudo borrar la pelicula",
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"status":   "borrado",
+				"pelicula": rtn})
+		}
 	}
 }
 
 func agregarPelicula(s Service) gin.HandlerFunc {
 	var p Pelicula
-
 	return func(c *gin.Context) {
-		c.ShouldBindJSON(&p)
-		c.JSON(200, gin.H{
-			"status":   "Agregado",
-			"pelicula": s.AddPelicula(p)})
+		rtn, err := s.AddPelicula(p)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"status": "error",
+				"error":  "no se pudo agregar la pelicula",
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"status":   "Agregado",
+				"pelicula": rtn})
+		}
 	}
 }
 
@@ -110,9 +133,15 @@ func modificarPelicula(s Service) gin.HandlerFunc {
 	var p Pelicula
 
 	return func(c *gin.Context) {
-		c.ShouldBindJSON(&p)
-		c.JSON(200, gin.H{
-			"status":   "Modificado",
-			"pelicula": s.ModificarPelicula(c.Param("id"), p)})
+		rtn, err := s.ModificarPelicula(c.Param("id"), p)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"status": "error",
+				"error":  "no se pudo modificar la pelicula"})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"status":   "Modificado",
+				"pelicula": rtn})
+		}
 	}
 }
